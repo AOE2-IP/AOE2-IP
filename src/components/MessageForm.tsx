@@ -1,10 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
-import { Send, Lock, Palette } from 'lucide-react';
+import { Send, Lock, Palette, ChevronDown } from 'lucide-react';
 import {
   GAME_VERSIONS,
   PLAYER_COUNTS,
   SKILL_LEVELS,
-  TEXT_COLORS,
   COOLDOWN_SECONDS,
   MAX_NICKNAME_LENGTH,
   MAX_CONTENT_LENGTH,
@@ -30,16 +29,54 @@ interface MessageFormProps {
   onSend: (msg: ShoutMessage) => void;
 }
 
+// 模擬 Word 風格的豐富色票表 (佈景主題色、階層色、標準色)
+const WORD_COLOR_PALETTE = [
+  // 頂部標準/基本色
+  { label: '純白', value: '#ffffff' },
+  { label: '深黑', value: '#111111' },
+  { label: '經典金', value: '#ffd700' },
+  { label: '琥珀黃', value: '#ffaa00' },
+  { label: '烈焰紅', value: '#ff4500' },
+  { label: '翠綠色', value: '#00ff7f' },
+  { label: '天空藍', value: '#00bfff' },
+  { label: '帝國藍', value: '#1e90ff' },
+  { label: '亮紫色', value: '#da70d6' },
+  { label: '粉紅色', value: '#ff69b4' },
+
+  // 色階與佈景主題色彩仿真
+  { label: '淺灰白', value: '#e2e8f0' },
+  { label: '石墨灰', value: '#64748b' },
+  { label: '深褐灰', value: '#334155' },
+  { label: '暗夜藍', value: '#0f172a' },
+  { label: '血腥紅', value: '#991b1b' },
+  { label: '磚塊紅', value: '#dc2626' },
+  { label: '鮮黃色', value: '#facc15' },
+  { label: '萊姆綠', value: '#84cc16' },
+  { label: '森林綠', value: '#15803d' },
+  { label: '青藍色', value: '#06b6d4' },
+  { label: '寶藍色', value: '#2563eb' },
+  { label: '靛紫色', value: '#7c3aed' },
+  { label: '紫紅色', value: '#db2777' },
+  { label: '巧克力', value: '#78350f' },
+];
+
+const DEFAULT_COLOR = '#ffd700'; // 預設經典金
+
 export default function MessageForm({ onSend }: MessageFormProps) {
   const [nickname, setNickname] = useState('');
   const [version, setVersion] = useState('');
   const [playerCount, setPlayerCount] = useState('');
   const [skillLevel, setSkillLevel] = useState('');
-  const [color, setColor] = useState('');
+  const [color, setColor] = useState(DEFAULT_COLOR);
   const [content, setContent] = useState('');
   const [posterIP, setPosterIP] = useState('');
   const [error, setError] = useState('');
   const [cooldown, setCooldown] = useState(0);
+  
+  // 控制 Word 風格色彩下拉選單的開關
+  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
+  const colorPickerRef = useRef<HTMLDivElement>(null);
+
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -47,7 +84,18 @@ export default function MessageForm({ onSend }: MessageFormProps) {
     setVersion(loadVersion() || (GAME_VERSIONS[0] as string));
     setPlayerCount(loadPlayerCount() || (PLAYER_COUNTS[0] as string));
     setSkillLevel(loadSkillLevel() || (SKILL_LEVELS[1] as string));
-    setColor(loadColor() || TEXT_COLORS[0].value);
+    setColor(loadColor() || DEFAULT_COLOR);
+  }, []);
+
+  // 點擊外部自動關閉色票選單
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (colorPickerRef.current && !colorPickerRef.current.contains(event.target as Node)) {
+        setIsColorPickerOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   useEffect(() => {
@@ -123,7 +171,7 @@ export default function MessageForm({ onSend }: MessageFormProps) {
       version: version || (GAME_VERSIONS[0] as string),
       playerCount: playerCount || (PLAYER_COUNTS[0] as string),
       skillLevel: skillLevel || (SKILL_LEVELS[1] as string),
-      color: color || TEXT_COLORS[0].value,
+      color: color || DEFAULT_COLOR,
       content: text,
       posterIP,
       timestamp: Date.now(),
@@ -142,6 +190,7 @@ export default function MessageForm({ onSend }: MessageFormProps) {
 
   const remaining = MAX_CONTENT_LENGTH - content.length;
   const disabled = cooldown > 0;
+  const currentColorObj = WORD_COLOR_PALETTE.find((c) => c.value === color) || { label: '自選色', value: color };
 
   return (
     <div className="wood-panel gold-border rounded-lg p-3 sm:p-4 relative">
@@ -216,34 +265,59 @@ export default function MessageForm({ onSend }: MessageFormProps) {
           </div>
         </div>
 
-        {/* Row 2: Color Palette (改為精巧的色塊色表選擇，並限制在5種以內) */}
-        <div>
-          <label className="font-heading text-[10px] gold-text block mb-1 tracking-wide flex items-center gap-1">
-            <Palette size={11} />
+        {/* Row 2: Word Style Color Dropdown Grid (Word 風格色表下拉選單) */}
+        <div className="relative inline-block" ref={colorPickerRef}>
+          <label className="font-heading text-[10px] gold-text block mb-0.5 tracking-wide">
+            <Palette size={11} className="inline mr-1 -mt-0.5" />
             字體顏色
           </label>
-          <div className="flex items-center gap-2">
-            {TEXT_COLORS.slice(0, 5).map((c) => {
-              const isSelected = color === c.value;
-              return (
-                <button
-                  key={c.value}
-                  type="button"
-                  title={c.label}
-                  onClick={() => setColor(c.value)}
-                  className={`w-6 h-6 rounded-full transition-transform ${
-                    isSelected
-                      ? 'ring-2 ring-amber-300 scale-110 shadow-md'
-                      : 'opacity-80 hover:opacity-100 hover:scale-105'
-                  } border border-black/40`}
-                  style={{ backgroundColor: c.value }}
-                />
-              );
-            })}
-            <span className="text-xs font-body text-amber-200/70 ml-1">
-              ({TEXT_COLORS.find(c => c.value === color)?.label || '自選色'})
-            </span>
-          </div>
+          <button
+            type="button"
+            onClick={() => setIsColorPickerOpen(!isColorPickerOpen)}
+            className="input-parchment flex items-center justify-between gap-3 px-3 py-1.5 rounded text-sm font-body w-44 cursor-pointer"
+          >
+            <div className="flex items-center gap-2">
+              <span
+                className="w-4 h-4 rounded-sm border border-black/50 shadow-inner"
+                style={{ backgroundColor: color }}
+              />
+              <span className="font-medium truncate" style={{ color: color === '#ffffff' ? '#cbd5e1' : color }}>
+                {currentColorObj.label}
+              </span>
+            </div>
+            <ChevronDown size={14} className="text-amber-200/70" />
+          </button>
+
+          {/* Word 風格彈出色票網格面板 */}
+          {isColorPickerOpen && (
+            <div className="absolute left-0 mt-1 z-50 bg-[#1e150c] border-2 border-amber-600/70 rounded-md shadow-2xl p-3 w-64 backdrop-blur-md">
+              <div className="text-[11px] font-heading text-amber-200/80 mb-2 border-b border-amber-900/50 pb-1">
+                標準與主題色彩 (Word Style)
+              </div>
+              <div className="grid grid-cols-6 gap-1.5">
+                {WORD_COLOR_PALETTE.map((c) => {
+                  const isSelected = color === c.value;
+                  return (
+                    <button
+                      key={c.value}
+                      type="button"
+                      title={c.label}
+                      onClick={() => {
+                        setColor(c.value);
+                        setIsColorPickerOpen(false);
+                      }}
+                      className={`w-7 h-7 rounded transition-transform ${
+                        isSelected
+                          ? 'ring-2 ring-amber-300 scale-110 z-10 shadow-lg'
+                          : 'hover:scale-110 hover:border-white border border-black/40'
+                      }`}
+                      style={{ backgroundColor: c.value }}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Row 3: Content + Submit */}
