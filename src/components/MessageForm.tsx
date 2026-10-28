@@ -216,24 +216,34 @@ export default function MessageForm({ onSend }: MessageFormProps) {
           </div>
         </div>
 
-        {/* Row 2: Color dropdown select (已改為下拉式選單) */}
+        {/* Row 2: Color Palette (改為精巧的色塊色表選擇，並限制在5種以內) */}
         <div>
-          <label className="font-heading text-[10px] gold-text block mb-0.5 tracking-wide">
-            <Palette size={11} className="inline mr-1 -mt-0.5" />
-            留言字體顏色
+          <label className="font-heading text-[10px] gold-text block mb-1 tracking-wide flex items-center gap-1">
+            <Palette size={11} />
+            字體顏色
           </label>
-          <select
-            value={color}
-            onChange={(e) => setColor(e.target.value)}
-            className="input-parchment w-full sm:w-1/2 rounded px-2.5 py-1.5 text-sm font-body cursor-pointer"
-            style={{ color: color || '#ffd700' }}
-          >
-            {TEXT_COLORS.map((c) => (
-              <option key={c.value} value={c.value} style={{ color: c.value, backgroundColor: '#2a1a08' }}>
-                {c.label}
-              </option>
-            ))}
-          </select>
+          <div className="flex items-center gap-2">
+            {TEXT_COLORS.slice(0, 5).map((c) => {
+              const isSelected = color === c.value;
+              return (
+                <button
+                  key={c.value}
+                  type="button"
+                  title={c.label}
+                  onClick={() => setColor(c.value)}
+                  className={`w-6 h-6 rounded-full transition-transform ${
+                    isSelected
+                      ? 'ring-2 ring-amber-300 scale-110 shadow-md'
+                      : 'opacity-80 hover:opacity-100 hover:scale-105'
+                  } border border-black/40`}
+                  style={{ backgroundColor: c.value }}
+                />
+              );
+            })}
+            <span className="text-xs font-body text-amber-200/70 ml-1">
+              ({TEXT_COLORS.find(c => c.value === color)?.label || '自選色'})
+            </span>
+          </div>
         </div>
 
         {/* Row 3: Content + Submit */}
