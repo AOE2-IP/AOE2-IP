@@ -1,0 +1,337 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --wood-dark: #2b1810;
+    --wood-mid: #3d2517;
+    --wood-light: #5a3a23;
+    --parchment: #e8d5a8;
+    --parchment-dark: #c9b388;
+    --gold: #c9a227;
+    --gold-bright: #f0d264;
+    --gold-dark: #8a6d1a;
+    --iron: #4a4a4a;
+    --iron-light: #6b6b6b;
+    --blood: #8b2020;
+    --blood-dark: #5c1414;
+    --stone: #847b6c;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Noto Serif TC', 'Times New Roman', serif;
+    background-color: #1a0f08;
+    color: #e8d5a8;
+  }
+}
+
+@layer components {
+  .font-heading {
+    font-family: 'Cinzel', 'Noto Serif TC', serif;
+    letter-spacing: 0.04em;
+  }
+
+  .font-medieval {
+    font-family: 'MedievalSharp', 'Noto Serif TC', cursive;
+  }
+
+  .font-body {
+    font-family: 'Noto Serif TC', serif;
+  }
+
+  /* ── Wood texture ── */
+  .wood-bg {
+    background-color: #2b1810;
+    background-image:
+      repeating-linear-gradient(
+        90deg,
+        transparent 0px,
+        transparent 3px,
+        rgba(0, 0, 0, 0.15) 3px,
+        rgba(0, 0, 0, 0.15) 4px,
+        transparent 4px,
+        transparent 8px
+      ),
+      repeating-linear-gradient(
+        0deg,
+        rgba(90, 58, 35, 0.3) 0px,
+        rgba(90, 58, 35, 0.3) 2px,
+        transparent 2px,
+        transparent 6px
+      ),
+      linear-gradient(180deg, #3d2517 0%, #2b1810 50%, #1f110a 100%);
+  }
+
+  .wood-panel {
+    background-color: #3d2517;
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        transparent 0px,
+        transparent 40px,
+        rgba(0, 0, 0, 0.25) 40px,
+        rgba(0, 0, 0, 0.25) 42px,
+        transparent 42px,
+        transparent 84px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent 0px,
+        transparent 2px,
+        rgba(0, 0, 0, 0.08) 2px,
+        rgba(0, 0, 0, 0.08) 3px
+      ),
+      linear-gradient(135deg, #4a2c19 0%, #3d2517 100%);
+  }
+
+  /* ── Parchment texture ── */
+  .parchment-bg {
+    background-color: #e8d5a8;
+    background-image:
+      radial-gradient(ellipse at 20% 80%, rgba(180, 150, 100, 0.3) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(200, 170, 120, 0.2) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(160, 130, 80, 0.1) 0%, transparent 70%),
+      linear-gradient(180deg, #f0e0b8 0%, #e8d5a8 40%, #d8c498 100%);
+  }
+
+  .parchment-dark-bg {
+    background-color: #c9b388;
+    background-image:
+      radial-gradient(ellipse at 30% 70%, rgba(140, 110, 70, 0.3) 0%, transparent 60%),
+      radial-gradient(ellipse at 70% 30%, rgba(160, 130, 90, 0.2) 0%, transparent 60%),
+      linear-gradient(180deg, #d8c498 0%, #c9b388 100%);
+  }
+
+  /* ── Gold metal ── */
+  .gold-border {
+    border: 2px solid #8a6d1a;
+    box-shadow:
+      inset 0 0 0 1px #c9a227,
+      inset 0 1px 0 rgba(240, 210, 100, 0.4),
+      0 2px 4px rgba(0, 0, 0, 0.4);
+  }
+
+  .gold-text {
+    color: #f0d264;
+    text-shadow:
+      0 0 1px rgba(138, 109, 26, 0.8),
+      0 1px 2px rgba(0, 0, 0, 0.5);
+  }
+
+  .gold-text-glow {
+    color: #f0d264;
+    text-shadow:
+      0 0 4px rgba(201, 162, 39, 0.6),
+      0 0 8px rgba(201, 162, 39, 0.3),
+      0 1px 2px rgba(0, 0, 0, 0.7);
+  }
+
+  /* ── Iron / steel ── */
+  .iron-border {
+    border: 2px solid #2a2a2a;
+    box-shadow:
+      inset 0 0 0 1px #5a5a5a,
+      inset 0 1px 0 rgba(120, 120, 120, 0.3),
+      0 2px 6px rgba(0, 0, 0, 0.5);
+  }
+
+  /* ── Medieval button ── */
+  .btn-medieval {
+    background-image: linear-gradient(180deg, #4a2c19 0%, #2b1810 100%);
+    border: 2px solid #8a6d1a;
+    box-shadow:
+      inset 0 1px 0 rgba(240, 210, 100, 0.2),
+      inset 0 -2px 4px rgba(0, 0, 0, 0.4),
+      0 2px 4px rgba(0, 0, 0, 0.5);
+    color: #f0d264;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+    transition: all 0.15s ease;
+  }
+
+  .btn-medieval:hover:not(:disabled) {
+    background-image: linear-gradient(180deg, #5a3a23 0%, #3d2517 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(240, 210, 100, 0.3),
+      inset 0 -2px 4px rgba(0, 0, 0, 0.4),
+      0 0 8px rgba(201, 162, 39, 0.3),
+      0 2px 6px rgba(0, 0, 0, 0.5);
+  }
+
+  .btn-medieval:active:not(:disabled) {
+    transform: translateY(1px);
+    box-shadow:
+      inset 0 2px 4px rgba(0, 0, 0, 0.5),
+      0 1px 2px rgba(0, 0, 0, 0.4);
+  }
+
+  .btn-medieval:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(0.4);
+  }
+
+  /* ── Parchment input ── */
+  .input-parchment {
+    background-color: #f0e0b8;
+    background-image: linear-gradient(180deg, #f2e2bb 0%, #e8d5a8 100%);
+    border: 2px solid #8a6d1a;
+    box-shadow:
+      inset 0 2px 4px rgba(120, 90, 40, 0.2),
+      inset 0 0 0 1px rgba(201, 162, 39, 0.4);
+    color: #3d2517;
+    transition: all 0.2s ease;
+  }
+
+  .input-parchment:focus {
+    outline: none;
+    border-color: #c9a227;
+    box-shadow:
+      inset 0 2px 4px rgba(120, 90, 40, 0.15),
+      0 0 0 1px #c9a227,
+      0 0 8px rgba(201, 162, 39, 0.25);
+  }
+
+  .input-parchment::placeholder {
+    color: #8a7a55;
+    font-style: italic;
+  }
+
+  /* ── IP highlight badge ── */
+  .ip-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background-image: linear-gradient(180deg, #1a3a5c 0%, #0d2238 100%);
+    border: 1px solid #4a8;
+    border-radius: 3px;
+    padding: 1px 6px;
+    color: #7ae0ff;
+    font-family: 'Cinzel', monospace;
+    font-size: 0.85em;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    box-shadow: inset 0 1px 0 rgba(122, 224, 255, 0.2);
+  }
+
+  /* ── Status tag ── */
+  .tag-medieval {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 2px;
+    font-size: 0.8em;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+  }
+
+  .tag-1v1 {
+    background: #5c1414;
+    color: #f0d264;
+    border: 1px solid #8b2020;
+  }
+
+  .tag-4v4 {
+    background: #1a3a5c;
+    color: #7ae0ff;
+    border: 1px solid #2a5a8c;
+  }
+
+  .tag-up {
+    background: #2a5c1a;
+    color: #a8e8a8;
+    border: 1px solid #3a7a2a;
+  }
+
+  .tag-full {
+    background: #4a4a4a;
+    color: #bbb;
+    border: 1px solid #6b6b6b;
+  }
+
+  /* ── Scrollbar ── */
+  .scroll-medieval::-webkit-scrollbar {
+    width: 10px;
+  }
+  .scroll-medieval::-webkit-scrollbar-track {
+    background: #1f110a;
+    border-left: 1px solid #5a3a23;
+  }
+  .scroll-medieval::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #8a6d1a 0%, #5a3a23 100%);
+    border: 1px solid #2b1810;
+    border-radius: 2px;
+  }
+  .scroll-medieval::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #c9a227 0%, #8a6d1a 100%);
+  }
+
+  /* ── Animations ── */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-msg-in {
+    animation: fadeInUp 0.3s ease-out;
+  }
+
+  @keyframes flickerGlow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+
+  .animate-flicker {
+    animation: flickerGlow 2s ease-in-out infinite;
+  }
+
+  @keyframes pulseGold {
+    0%, 100% { box-shadow: 0 0 4px rgba(201, 162, 39, 0.3); }
+    50% { box-shadow: 0 0 12px rgba(201, 162, 39, 0.6); }
+  }
+
+  .animate-pulse-gold {
+    animation: pulseGold 2s ease-in-out infinite;
+  }
+
+  /* ── Decorative rivet ── */
+  .rivet {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #c9a227, #5a3a23);
+    box-shadow:
+      inset 0 -1px 1px rgba(0, 0, 0, 0.4),
+      0 1px 1px rgba(0, 0, 0, 0.3);
+  }
+
+  /* ── Modal backdrop ── */
+  .modal-backdrop {
+    background: rgba(15, 8, 4, 0.8);
+    backdrop-filter: blur(2px);
+  }
+
+  @keyframes modalIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95) translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  .animate-modal-in {
+    animation: modalIn 0.25s ease-out;
+  }
+}
