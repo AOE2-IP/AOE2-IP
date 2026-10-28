@@ -216,32 +216,24 @@ export default function MessageForm({ onSend }: MessageFormProps) {
           </div>
         </div>
 
-        {/* Row 2: Color picker */}
+        {/* Row 2: Color dropdown select (已改為下拉式選單) */}
         <div>
-          <label className="font-heading text-[10px] gold-text block mb-1 tracking-wide">
+          <label className="font-heading text-[10px] gold-text block mb-0.5 tracking-wide">
             <Palette size={11} className="inline mr-1 -mt-0.5" />
-            留言顏色
+            留言字體顏色
           </label>
-          <div className="flex flex-wrap items-center gap-2">
+          <select
+            value={color}
+            onChange={(e) => setColor(e.target.value)}
+            className="input-parchment w-full sm:w-1/2 rounded px-2.5 py-1.5 text-sm font-body cursor-pointer"
+            style={{ color: color || '#ffd700' }}
+          >
             {TEXT_COLORS.map((c) => (
-              <button
-                key={c.value}
-                type="button"
-                onClick={() => setColor(c.value)}
-                className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-heading border transition-all ${
-                  color === c.value
-                    ? 'border-amber-400 bg-amber-800/30 shadow-inner'
-                    : 'border-amber-800/30 bg-amber-900/10 hover:bg-amber-800/20'
-                }`}
-              >
-                <span
-                  className="w-3.5 h-3.5 rounded-full border border-black/30"
-                  style={{ backgroundColor: c.value }}
-                />
+              <option key={c.value} value={c.value} style={{ color: c.value, backgroundColor: '#2a1a08' }}>
                 {c.label}
-              </button>
+              </option>
             ))}
-          </div>
+          </select>
         </div>
 
         {/* Row 3: Content + Submit */}
