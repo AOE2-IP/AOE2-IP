@@ -40,11 +40,12 @@ export default function App() {
     }
   };
 
-  // 初始化時載入，並設定 Realtime 即時監聽
+  // 初始化時載入留言，並設定 Realtime 資料庫與 Presence 在線人數監聽
   useEffect(() => {
     fetchMessagesFromSupabase();
 
-    const channel = supabase
+    // ── 留言板即時同步頻道 ──
+    const msgChannel = supabase
       .channel('public:shoutbox_messages')
       .on(
         'postgres_changes',
@@ -66,8 +67,30 @@ export default function App() {
       )
       .subscribe();
 
+    // ── 精準在線人數統計 (Supabase Presence) ──
+    const presenceChannel = supabase.channel('online-lobby', {
+      config: {
+        presence: {
+          key: Math.random().toString(36).substring(2, 9), // 生成獨立連線 ID
+        },
+      },
+    });
+
+    presenceChannel
+      .on('presence', { event: 'sync' }, () => {
+        const state = presenceChannel.presenceState();
+        const count = Object.keys(state).length;
+        setOnlineCount(Math.max(1, count));
+      })
+      .subscribe(async (status) => {
+        if (status === 'SUBSCRIBED') {
+          await presenceChannel.track({ onlineAt: new Date().toISOString() });
+        }
+      });
+
     return () => {
-      supabase.removeChannel(channel);
+      supabase.removeChannel(msgChannel);
+      supabase.removeChannel(presenceChannel);
     };
   }, []);
 
@@ -82,19 +105,6 @@ export default function App() {
     return () => {
       if (cleanupRef.current) clearInterval(cleanupRef.current);
     };
-  }, []);
-
-  // 模擬線上人數波動
-  useEffect(() => {
-    const base = 3 + Math.floor(Math.random() * 8);
-    setOnlineCount(base);
-    const interval = setInterval(() => {
-      setOnlineCount((c) => {
-        const delta = Math.random() > 0.5 ? 1 : -1;
-        return Math.max(1, Math.min(15, c + delta));
-      });
-    }, 15_000);
-    return () => clearInterval(interval);
   }, []);
 
   // 2. 發送留言：寫入 Supabase 資料庫
