@@ -141,10 +141,10 @@ export default function App() {
             />
             <div className="min-w-0">
               <h1 className="font-medieval gold-text-glow text-lg sm:text-2xl truncate leading-tight">
-                世紀帝國 II 約戰大廳
+                世紀帝國 II：征服者入侵
               </h1>
               <p className="text-[10px] sm:text-xs text-amber-200/50 font-body truncate">
-                IP 連線留言板 · 骨灰級玩家專屬 (Supabase 雲端同步)
+                IP 連線留言板 · 骨灰級玩家專屬
               </p>
             </div>
           </div>
@@ -153,7 +153,7 @@ export default function App() {
             <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded bg-green-900/30 border border-green-700/40">
               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse-gold" />
               <span className="text-xs text-green-300 font-body">
-                {onlineCount} 位將領線上
+                {onlineCount} 位骨灰級玩家 線上
               </span>
             </div>
           </div>
