@@ -153,7 +153,7 @@ export default function App() {
                   世紀帝國 II：征服者入侵
                 </h1>
                 <p className="text-[10px] sm:text-xs text-amber-200/50 font-body truncate">
-                  IP 連線留言板 · 骨灰級玩家專屬
+                  IP 連線留言板
                 </p>
               </div>
             </div>
