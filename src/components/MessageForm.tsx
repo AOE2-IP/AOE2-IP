@@ -301,7 +301,7 @@ export default function MessageForm({ onSend }: MessageFormProps) {
           {isColorPickerOpen && (
             <div className="absolute left-0 mt-1 z-50 bg-[#1e150c] border-2 border-amber-600/70 rounded-md shadow-2xl p-3 w-64 backdrop-blur-md">
               <div className="text-[11px] font-heading text-amber-200/80 mb-2 border-b border-amber-900/50 pb-1">
-                標準與主題色彩 (Word Style)
+              
               </div>
               <div className="grid grid-cols-6 gap-1.5">
                 {WORD_COLOR_PALETTE.map((c) => {
