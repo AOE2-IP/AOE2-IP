@@ -153,7 +153,7 @@ export default function App() {
             <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded bg-green-900/30 border border-green-700/40">
               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse-gold" />
               <span className="text-xs text-green-300 font-body">
-                {onlineCount} 位骨灰級玩家 線上
+                {onlineCount} 位骨灰級玩家在線上
               </span>
             </div>
           </div>
