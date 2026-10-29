@@ -181,7 +181,7 @@ export default function App() {
         <div className="flex items-center gap-3 py-1 mb-4">
           <div className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-700/40 to-transparent" />
           <span className="font-heading text-xs gold-text tracking-widest">
-            約 戰 動 態
+            留 言 動 態
           </span>
           <div className="h-px flex-1 bg-gradient-to-r from-transparent via-amber-700/40 to-transparent" />
         </div>
@@ -195,7 +195,7 @@ export default function App() {
         <div className="max-w-4xl mx-auto">
           <MessageForm onSend={handleSend} />
           <p className="text-center mt-2 text-[10px] text-amber-200/30 font-body">
-            雲端同步即時約戰 · 每 15 秒發言冷卻 · 每 12 小時自動清理
+            每 15 秒發言冷卻 · 每 12 小時自動清理
           </p>
         </div>
       </div>
