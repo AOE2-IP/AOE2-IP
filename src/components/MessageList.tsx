@@ -93,14 +93,10 @@ function MessageItem({ msg }: { msg: ShoutMessage }) {
         <ContentWithIPs content={msg.content} />
       </div>
 
-      {/* Footer line: poster IP + game IP info + timestamp at the end */}
+      {/* Footer line: left has game IP info + copy button, right has poster IP + timestamp */}
       <div className="mt-3 pt-2 border-t border-amber-900/20 flex items-center justify-between gap-2 flex-wrap">
+        {/* 左側：內文偵測到的遊戲 IP 與「複製連線IP」按鈕 */}
         <div className="flex items-center gap-2.5 flex-wrap">
-          {msg.posterIP && (
-            <span className="text-xs text-amber-900/70 font-body">
-              來自: <span className="font-semibold text-amber-950">{msg.posterIP}</span>
-            </span>
-          )}
           {ips.length > 0 && (
             <>
               <span className="text-xs text-amber-900/80 font-body">
@@ -122,17 +118,26 @@ function MessageItem({ msg }: { msg: ShoutMessage }) {
                 ) : (
                   <>
                     <Copy size={13} />
-                    複製 IP
+                    複製連線IP
                   </>
                 )}
               </button>
             </>
           )}
         </div>
-        <span className="flex items-center gap-1 text-xs text-amber-900/70 font-body whitespace-nowrap ml-auto">
-          <Clock size={12} />
-          {formatTime(msg.timestamp)}
-        </span>
+
+        {/* 右側：發文者IP（移到時間左側） + 時間 */}
+        <div className="flex items-center gap-3 ml-auto flex-wrap">
+          {msg.posterIP && (
+            <span className="text-xs text-amber-900/70 font-body">
+              來自: <span className="font-semibold text-amber-950">{msg.posterIP}</span>
+            </span>
+          )}
+          <span className="flex items-center gap-1 text-xs text-amber-900/70 font-body whitespace-nowrap">
+            <Clock size={12} />
+            {formatTime(msg.timestamp)}
+          </span>
+        </div>
       </div>
     </div>
   );
