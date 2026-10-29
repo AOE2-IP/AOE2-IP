@@ -213,7 +213,7 @@ export default function MessageForm({ onSend }: MessageFormProps) {
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
               maxLength={MAX_NICKNAME_LENGTH}
-              placeholder="將領名號…"
+              placeholder="必填"
               className="input-parchment w-full rounded px-2.5 py-1.5 text-sm font-body"
             />
           </div>
@@ -333,7 +333,7 @@ export default function MessageForm({ onSend }: MessageFormProps) {
         <div className="flex flex-col sm:flex-row gap-2.5 items-end">
           <div className="flex-1 w-full">
             <label htmlFor="shoutbox-content" className="font-heading text-[10px] gold-text block mb-0.5 tracking-wide">
-              留言內容（可填入 IP:Port 約戰）
+              留言內容
             </label>
             <textarea
               id="shoutbox-content"
@@ -342,7 +342,7 @@ export default function MessageForm({ onSend }: MessageFormProps) {
               onChange={(e) => setContent(e.target.value)}
               maxLength={MAX_CONTENT_LENGTH}
               rows={2}
-              placeholder="例如：IP: 114.32.56.78:24150，快來！"
+              placeholder="例如：IP: 114.32.56.78，無海牧地"
               className="input-parchment w-full rounded px-3 py-2 text-sm font-body resize-none scroll-medieval"
             />
             <div className="flex justify-between items-center mt-1">
