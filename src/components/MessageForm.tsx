@@ -203,10 +203,12 @@ export default function MessageForm({ onSend }: MessageFormProps) {
         {/* Row 1: Nickname + Version + PlayerCount + SkillLevel */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
           <div>
-            <label className="font-heading text-[10px] gold-text block mb-0.5 tracking-wide">
+            <label htmlFor="shoutbox-nickname" className="font-heading text-[10px] gold-text block mb-0.5 tracking-wide">
               暱稱
             </label>
             <input
+              id="shoutbox-nickname"
+              name="nickname"
               type="text"
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
@@ -216,10 +218,12 @@ export default function MessageForm({ onSend }: MessageFormProps) {
             />
           </div>
           <div>
-            <label className="font-heading text-[10px] gold-text block mb-0.5 tracking-wide">
+            <label htmlFor="shoutbox-version" className="font-heading text-[10px] gold-text block mb-0.5 tracking-wide">
               版本
             </label>
             <select
+              id="shoutbox-version"
+              name="version"
               value={version}
               onChange={(e) => setVersion(e.target.value)}
               className="input-parchment w-full rounded px-2.5 py-1.5 text-sm font-body cursor-pointer"
@@ -232,10 +236,12 @@ export default function MessageForm({ onSend }: MessageFormProps) {
             </select>
           </div>
           <div>
-            <label className="font-heading text-[10px] gold-text block mb-0.5 tracking-wide">
+            <label htmlFor="shoutbox-player-count" className="font-heading text-[10px] gold-text block mb-0.5 tracking-wide">
               人數
             </label>
             <select
+              id="shoutbox-player-count"
+              name="playerCount"
               value={playerCount}
               onChange={(e) => setPlayerCount(e.target.value)}
               className="input-parchment w-full rounded px-2.5 py-1.5 text-sm font-body cursor-pointer"
@@ -248,10 +254,12 @@ export default function MessageForm({ onSend }: MessageFormProps) {
             </select>
           </div>
           <div>
-            <label className="font-heading text-[10px] gold-text block mb-0.5 tracking-wide">
+            <label htmlFor="shoutbox-skill-level" className="font-heading text-[10px] gold-text block mb-0.5 tracking-wide">
               強度
             </label>
             <select
+              id="shoutbox-skill-level"
+              name="skillLevel"
               value={skillLevel}
               onChange={(e) => setSkillLevel(e.target.value)}
               className="input-parchment w-full rounded px-2.5 py-1.5 text-sm font-body cursor-pointer"
@@ -267,11 +275,12 @@ export default function MessageForm({ onSend }: MessageFormProps) {
 
         {/* Row 2: Word Style Color Dropdown Grid (Word 風格色表下拉選單) */}
         <div className="relative inline-block" ref={colorPickerRef}>
-          <label className="font-heading text-[10px] gold-text block mb-0.5 tracking-wide">
+          <label htmlFor="shoutbox-color-picker" className="font-heading text-[10px] gold-text block mb-0.5 tracking-wide">
             <Palette size={11} className="inline mr-1 -mt-0.5" />
             字體顏色
           </label>
           <button
+            id="shoutbox-color-picker"
             type="button"
             onClick={() => setIsColorPickerOpen(!isColorPickerOpen)}
             className="input-parchment flex items-center justify-between gap-3 px-3 py-1.5 rounded text-sm font-body w-44 cursor-pointer"
@@ -323,10 +332,12 @@ export default function MessageForm({ onSend }: MessageFormProps) {
         {/* Row 3: Content + Submit */}
         <div className="flex flex-col sm:flex-row gap-2.5 items-end">
           <div className="flex-1 w-full">
-            <label className="font-heading text-[10px] gold-text block mb-0.5 tracking-wide">
+            <label htmlFor="shoutbox-content" className="font-heading text-[10px] gold-text block mb-0.5 tracking-wide">
               留言內容（可填入 IP:Port 約戰）
             </label>
             <textarea
+              id="shoutbox-content"
+              name="content"
               value={content}
               onChange={(e) => setContent(e.target.value)}
               maxLength={MAX_CONTENT_LENGTH}
