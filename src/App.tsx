@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { Castle, BookOpen, Trash2, Swords, ScrollText } from 'lucide-react';
 import type { ShoutMessage } from '@/types';
 import { TTL_HOURS } from '@/types';
-import { loadMessages, saveMessages } from '@/utils/storage';
+import { supabase } from '@/lib/supabase'; // 引入我們剛剛設定好的 Supabase 客戶端
 import MessageForm from '@/components/MessageForm';
 import MessageList from '@/components/MessageList';
 import TutorialModal from '@/components/TutorialModal';
@@ -20,14 +20,64 @@ export default function App() {
   const [onlineCount, setOnlineCount] = useState(1);
   const cleanupRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // 1. 從 Supabase 載入留言
+  const fetchMessagesFromSupabase = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('shoutbox_messages')
+        .select('*')
+        .order('timestamp', { ascending: false });
+
+      if (error) {
+        console.error('載入 Supabase 留言失敗:', error.message);
+        return;
+      }
+
+      if (data) {
+        // 過濾掉超過有效時數的舊留言
+        const validMsgs = filterExpired(data as ShoutMessage[]);
+        setMessages(validMsgs);
+      }
+    } catch (err) {
+      console.error('連線 Supabase 異常:', err);
+    }
+  };
+
+  // 初始化時載入，並設定 Realtime 即時監聽
   useEffect(() => {
-    setMessages(filterExpired(loadMessages()));
+    fetchMessagesFromSupabase();
+
+    // 訂閱 Supabase Realtime 變動（其他玩家發文會即時推送到這裡）
+    const channel = supabase
+      .channel('public:shoutbox_messages')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'shoutbox_messages' },
+        (payload) => {
+          const newMsg = payload.new as ShoutMessage;
+          setMessages((prev) => {
+            // 避免重複加入
+            if (prev.some((m) => m.id === newMsg.id)) return prev;
+            return filterExpired([newMsg, ...prev]).slice(0, 200);
+          });
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'shoutbox_messages' },
+        () => {
+          // 如果有刪除或清空，重新抓取一次
+          fetchMessagesFromSupabase();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
-  useEffect(() => {
-    saveMessages(messages);
-  }, [messages]);
-
+  // 定期清理過期留言
   useEffect(() => {
     cleanupRef.current = setInterval(() => {
       setMessages((prev) => {
@@ -40,6 +90,7 @@ export default function App() {
     };
   }, []);
 
+  // 模擬線上人數波動
   useEffect(() => {
     const base = 3 + Math.floor(Math.random() * 8);
     setOnlineCount(base);
@@ -52,13 +103,45 @@ export default function App() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleSend = useCallback((msg: ShoutMessage) => {
-    setMessages((prev) => [msg, ...prev].slice(0, 200));
+  // 2. 發送留言：寫入 Supabase 資料庫
+  const handleSend = useCallback(async (msg: ShoutMessage) => {
+    try {
+      const { error } = await supabase
+        .from('shoutbox_messages')
+        .insert([msg]);
+
+      if (error) {
+        console.error('寫入 Supabase 失敗:', error.message);
+        alert('發送留言失敗，請稍後再試。');
+        return;
+      }
+
+      // 成功寫入後，本地立即更新畫面（配合 Realtime，雙重保險）
+      setMessages((prev) => filterExpired([msg, ...prev]).slice(0, 200));
+    } catch (err) {
+      console.error('送出留言異常:', err);
+    }
   }, []);
 
-  const handleClear = useCallback(() => {
-    if (window.confirm('確定要清空所有留言紀錄嗎？此操作無法復原。')) {
-      setMessages([]);
+  // 3. 清空紀錄：從 Supabase 刪除所有留言
+  const handleClear = useCallback(async () => {
+    if (window.confirm('確定要清空所有雲端留言紀錄嗎？此操作無法復原。')) {
+      try {
+        // 刪除資料表中的所有資料
+        const { error } = await supabase
+          .from('shoutbox_messages')
+          .delete()
+          .neq('id', ''); // 刪除全部
+
+        if (error) {
+          console.error('清空失敗:', error.message);
+          return;
+        }
+
+        setMessages([]);
+      } catch (err) {
+        console.error('清空異常:', err);
+      }
     }
   }, []);
 
@@ -80,7 +163,7 @@ export default function App() {
                 世紀帝國 II 約戰大廳
               </h1>
               <p className="text-[10px] sm:text-xs text-amber-200/50 font-body truncate">
-                IP 連線留言板 · 骨灰級玩家專屬
+                IP 連線留言板 · 骨灰級玩家專屬 (Supabase 雲端同步)
               </p>
             </div>
           </div>
@@ -147,7 +230,7 @@ export default function App() {
         <div className="max-w-4xl mx-auto">
           <MessageForm onSend={handleSend} />
           <p className="text-center mt-2 text-[10px] text-amber-200/30 font-body">
-            留言暫存於瀏覽器 LocalStorage · 每 15 秒發言冷卻 · 每 12 小時自動清理
+            雲端同步即時約戰 · 每 15 秒發言冷卻 · 每 12 小時自動清理
           </p>
         </div>
       </div>
