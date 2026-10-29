@@ -60,7 +60,7 @@ const WORD_COLOR_PALETTE = [
   { label: '巧克力', value: '#78350f' },
 ];
 
-const DEFAULT_COLOR = '#ffd700'; // 預設經典金
+const DEFAULT_COLOR = '#111111'; // 預設深黑
 
 export default function MessageForm({ onSend }: MessageFormProps) {
   const [nickname, setNickname] = useState('');
