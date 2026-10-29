@@ -1,11 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Castle, BookOpen, Trash2, Swords, ScrollText } from 'lucide-react';
+import { Castle, Swords, ScrollText } from 'lucide-react';
 import type { ShoutMessage } from '@/types';
 import { TTL_HOURS } from '@/types';
-import { supabase } from '@/lib/supabase'; // 引入我們剛剛設定好的 Supabase 客戶端
+import { supabase } from '@/lib/supabase';
 import MessageForm from '@/components/MessageForm';
 import MessageList from '@/components/MessageList';
-import TutorialModal from '@/components/TutorialModal';
 
 /** Remove messages older than TTL. Returns filtered list. */
 function filterExpired(msgs: ShoutMessage[]): ShoutMessage[] {
@@ -16,7 +15,6 @@ function filterExpired(msgs: ShoutMessage[]): ShoutMessage[] {
 
 export default function App() {
   const [messages, setMessages] = useState<ShoutMessage[]>([]);
-  const [tutorialOpen, setTutorialOpen] = useState(false);
   const [onlineCount, setOnlineCount] = useState(1);
   const cleanupRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -34,7 +32,6 @@ export default function App() {
       }
 
       if (data) {
-        // 過濾掉超過有效時數的舊留言
         const validMsgs = filterExpired(data as ShoutMessage[]);
         setMessages(validMsgs);
       }
@@ -47,7 +44,6 @@ export default function App() {
   useEffect(() => {
     fetchMessagesFromSupabase();
 
-    // 訂閱 Supabase Realtime 變動（其他玩家發文會即時推送到這裡）
     const channel = supabase
       .channel('public:shoutbox_messages')
       .on(
@@ -56,7 +52,6 @@ export default function App() {
         (payload) => {
           const newMsg = payload.new as ShoutMessage;
           setMessages((prev) => {
-            // 避免重複加入
             if (prev.some((m) => m.id === newMsg.id)) return prev;
             return filterExpired([newMsg, ...prev]).slice(0, 200);
           });
@@ -66,7 +61,6 @@ export default function App() {
         'postgres_changes',
         { event: 'DELETE', schema: 'public', table: 'shoutbox_messages' },
         () => {
-          // 如果有刪除或清空，重新抓取一次
           fetchMessagesFromSupabase();
         }
       )
@@ -116,32 +110,9 @@ export default function App() {
         return;
       }
 
-      // 成功寫入後，本地立即更新畫面（配合 Realtime，雙重保險）
       setMessages((prev) => filterExpired([msg, ...prev]).slice(0, 200));
     } catch (err) {
       console.error('送出留言異常:', err);
-    }
-  }, []);
-
-  // 3. 清空紀錄：從 Supabase 刪除所有留言
-  const handleClear = useCallback(async () => {
-    if (window.confirm('確定要清空所有雲端留言紀錄嗎？此操作無法復原。')) {
-      try {
-        // 刪除資料表中的所有資料
-        const { error } = await supabase
-          .from('shoutbox_messages')
-          .delete()
-          .neq('id', ''); // 刪除全部
-
-        if (error) {
-          console.error('清空失敗:', error.message);
-          return;
-        }
-
-        setMessages([]);
-      } catch (err) {
-        console.error('清空異常:', err);
-      }
     }
   }, []);
 
@@ -175,13 +146,6 @@ export default function App() {
                 {onlineCount} 位將領線上
               </span>
             </div>
-            <button
-              onClick={() => setTutorialOpen(true)}
-              className="btn-medieval rounded px-3 py-1.5 text-xs font-heading flex items-center gap-1.5"
-            >
-              <BookOpen size={14} />
-              <span className="hidden sm:inline">連線教學</span>
-            </button>
           </div>
         </div>
       </header>
@@ -201,15 +165,6 @@ export default function App() {
               自動清理 {TTL_HOURS} 小時前留言
             </span>
           </div>
-          {activeCount > 0 && (
-            <button
-              onClick={handleClear}
-              className="text-xs text-red-400/70 hover:text-red-400 font-body flex items-center gap-1 transition-colors"
-            >
-              <Trash2 size={12} />
-              清空紀錄
-            </button>
-          )}
         </div>
 
         {/* Divider */}
@@ -244,12 +199,6 @@ export default function App() {
           </span>
         </div>
       </div>
-
-      {/* ── Tutorial Modal ── */}
-      <TutorialModal
-        open={tutorialOpen}
-        onClose={() => setTutorialOpen(false)}
-      />
     </div>
   );
 }
