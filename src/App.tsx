@@ -130,11 +130,10 @@ export default function App() {
 
   return (
     <div className="min-h-screen wood-bg flex justify-center">
-      {/* ── 左側廣告欄（僅在桌機大螢幕 xl 以上顯示） ── */}
-      <aside className="hidden xl:flex flex-col w-48 p-4 shrink-0 justify-start">
+      {/* ── 左側廣告欄（目前隱藏，未來要顯示時移除 hidden 即可） ── */}
+      <aside className="hidden flex-col w-48 p-4 shrink-0 justify-start">
         <div className="sticky top-20 text-center border border-amber-900/30 rounded p-4 text-amber-200/30 text-xs font-body bg-black/20">
-          
-          {/* 未來申請好 AdSense 後，將廣告程式碼放在這裡 */}
+          廣告區塊 (左)
         </div>
       </aside>
 
@@ -211,11 +210,10 @@ export default function App() {
         </div>
       </div>
 
-      {/* ── 右側廣告欄（僅在桌機大螢幕 xl 以上顯示） ── */}
-      <aside className="hidden xl:flex flex-col w-48 p-4 shrink-0 justify-start">
+      {/* ── 右側廣告欄（目前隱藏，未來要顯示時移除 hidden 即可） ── */}
+      <aside className="hidden flex-col w-48 p-4 shrink-0 justify-start">
         <div className="sticky top-20 text-center border border-amber-900/30 rounded p-4 text-amber-200/30 text-xs font-body bg-black/20">
-          
-          {/* 未來申請好 AdSense 後，將廣告程式碼放在這裡 */}
+          廣告區塊 (右)
         </div>
       </aside>
 
