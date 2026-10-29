@@ -148,7 +148,7 @@ export default function MessageList({ messages }: MessageListProps) {
     return (
       <div className="parchment-dark-bg rounded-lg border border-amber-800/40 p-8 text-center">
         <p className="font-medieval text-amber-900/70 text-lg">
-          大廳空無一人…成為第一位出徵的將領吧！
+          
         </p>
       </div>
     );
