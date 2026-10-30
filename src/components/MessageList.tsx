@@ -53,14 +53,6 @@ function formatTime(ts: number): string {
   return `${d.getFullYear()}/${pad(d.getMonth() + 1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
-function MetaTag({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="text-xs text-amber-950 bg-amber-800/20 px-2 py-0.5 rounded font-heading font-semibold whitespace-nowrap">
-      {children}
-    </span>
-  );
-}
-
 function MessageItem({ msg }: { msg: ShoutMessage }) {
   const [copied, setCopied] = useState(false);
   const ips = extractIPs(msg.content);
@@ -78,24 +70,47 @@ function MessageItem({ msg }: { msg: ShoutMessage }) {
 
   return (
     <div className="parchment-bg rounded border-2 border-amber-800/60 p-4 shadow-lg animate-msg-in">
-      {/* Header line: [暱稱] [版本] [人數] [強度] */}
-      <div className="flex items-center gap-2 flex-wrap mb-2">
+      {/* Header line: 玩家暱稱 */}
+      <div className="flex items-center gap-2 flex-wrap mb-1">
         <span className="font-heading font-bold text-amber-950 text-base sm:text-lg truncate">
           {msg.nickname}
         </span>
-        <MetaTag>{msg.version}</MetaTag>
-        <MetaTag>{msg.playerCount}</MetaTag>
-        <MetaTag>{msg.skillLevel}</MetaTag>
       </div>
 
-      {/* Content line (字體放大至 text-base / text-lg) */}
-      <div className="text-base sm:text-lg font-body font-semibold leading-relaxed break-words py-1" style={{ color: msg.color }}>
-        <ContentWithIPs content={msg.content} />
+      {/* Content line: 將「版本」、「人數」、「強度」標籤顯示在留言內容最前面 */}
+      <div 
+        className="text-base sm:text-lg font-body font-semibold leading-relaxed break-words py-1 flex items-center gap-1.5 flex-wrap" 
+        style={{ color: msg.color }}
+      >
+        {/* 1. 版本標籤 */}
+        {msg.version && (
+          <span className="text-xs bg-amber-900/20 text-amber-950 border border-amber-800/40 px-2 py-0.5 rounded font-heading font-bold select-none shrink-0">
+            {msg.version}
+          </span>
+        )}
+
+        {/* 2. 人數標籤 */}
+        {msg.playerCount && (
+          <span className="text-xs bg-amber-900/20 text-amber-950 border border-amber-800/40 px-2 py-0.5 rounded font-heading font-bold select-none shrink-0">
+            {msg.playerCount}
+          </span>
+        )}
+
+        {/* 3. 強度標籤 */}
+        {msg.skillLevel && (
+          <span className="text-xs bg-amber-900/20 text-amber-950 border border-amber-800/40 px-2 py-0.5 rounded font-heading font-bold select-none shrink-0">
+            {msg.skillLevel}
+          </span>
+        )}
+
+        {/* 4. 留言內容本文（包含 IP 高亮） */}
+        <span className="ml-1">
+          <ContentWithIPs content={msg.content} />
+        </span>
       </div>
 
-      {/* Footer line: left has game IP info + copy button, right has poster IP + timestamp */}
+      {/* Footer line: 遊戲 IP 複製按鈕與發文者資訊 */}
       <div className="mt-3 pt-2 border-t border-amber-900/20 flex items-center justify-between gap-2 flex-wrap">
-        {/* 左側：內文偵測到的遊戲 IP 與「複製連線IP」按鈕 */}
         <div className="flex items-center gap-2.5 flex-wrap">
           {ips.length > 0 && (
             <>
@@ -126,7 +141,6 @@ function MessageItem({ msg }: { msg: ShoutMessage }) {
           )}
         </div>
 
-        {/* 右側：發文者IP（移到時間左側） + 時間 */}
         <div className="flex items-center gap-3 ml-auto flex-wrap">
           {msg.posterIP && (
             <span className="text-xs text-amber-900/70 font-body">
@@ -148,7 +162,7 @@ export default function MessageList({ messages }: MessageListProps) {
     return (
       <div className="parchment-dark-bg rounded-lg border border-amber-800/40 p-8 text-center">
         <p className="font-medieval text-amber-900/70 text-lg">
-          
+          目前尚無留言，成為第一個發布約戰資訊的玩家吧！
         </p>
       </div>
     );
